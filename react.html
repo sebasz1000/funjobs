@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>FunJobs - Jobs</title>
+    <meta name="description" content="Find your jobs here!!">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./styles.css">
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="module">
+        import React from "https://esm.sh/react?dev"
+        import ReactDOM from "https://esm.sh/react-dom/client?dev"
+        import { loadJobs } from "./fetch-data.js"
+
+        window.React = React
+        window.ReactDOM = ReactDOM
+        window.loadJobs = loadJobs
+    </script>
+    <script type="text/babel">
+
+
+
+        //import { useState } from "react"
+
+        function JobCard({ titulo, empresa, ubicacion, descripcion, data }) {
+
+            const [isApplied, setIsapplied] = React.useState(false)
+            const { technology, modalidad, nivel } = data
+            let dataTechnology = technology
+
+            if (Array.isArray(technology))
+                dataTechnology = technology.join(" ")
+
+            const handleApply = () => {
+                setIsapplied(prevState => !prevState)
+            }
+
+            const ApplyBtnText = isApplied ? "Aplicado" : "Aplicar"
+            const ApplyBtnClassName = isApplied ? "is-applied" : ""
+
+            return (<article data-location={modalidad} data-experience={nivel} data-technology={dataTechnology} data-title={titulo.toLowerCase()} className="jobs-listing-card">
+                <div>
+                    <h3 className="jobs-listing-card-title">{titulo}</h3>
+                    <small>{empresa} | {ubicacion}</small>
+                    <p>{descripcion}</p>
+                    <p>Tech Stack: {technology}</p>
+                    <small>Nivel de experiencia: {nivel}</small>
+                    <button style={{ display: "block", marginTop: "18px" }}
+                        onClick={handleApply}
+                        className={`btn-apply-job ${ApplyBtnClassName}`}>{ApplyBtnText}</button>
+                </div>
+            </article>)
+        }
+
+        function App() {
+
+            const [jobs, setJobs] = React.useState([])
+
+            React.useEffect(() => {
+                loadJobs().then(setJobs)
+            }, [])
+            return (
+                <div className="jobs-listings">
+                    {jobs?.map(job => <JobCard key={job.id} {...job} />)}
+                </div>)
+        }
+
+        const rootElement = document.getElementById("react-root")
+
+        const root = ReactDOM.createRoot(rootElement)
+
+        root.render(<App />)
+
+    </script>
+</head>
+
+<body>
+
+    <header>
+        <h2>FunJobs</h2>
+        <nav>
+
+            <a href="/">Inicio</a>
+            <a href="/jobs.html">Empleos</a>
+        </nav>
+        <div>
+            <a href="">Publicar un empleo</a>
+            <a href="">Iniciar Sesión</a>
+        </div>
+        <devjobs-avatar username="sebasz1000" size="42">
+        </devjobs-avatar>
+    </header>
+    <main>
+        <section class="jobs-search">
+            <h1>React.js</h1>
+        </section>
+        <section>
+            <h2>Resultados de búsqueda</h2>
+
+
+            <div id="react-root"></div>
+            <!-- Aquí se insertan los empleos dinámicamente -->
+
+            <nav class="pagination">
+                <a href="#" class="chevron-anchor prev">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M15 6l-6 6l6 6" />
+                    </svg>
+                </a>
+                <div class="pagination-numbers">
+                    <!-- achors created dynamically -->
+                </div>
+                <a href="#" class="chevron-anchor next">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M9 6l6 6l-6 6" />
+                    </svg>
+                </a>
+            </nav>
+        </section>
+
+    </main>
+    <footer>
+        <small>Todos los derechos reservados</small>
+    </footer>
+</body>
+
+
+</html>
